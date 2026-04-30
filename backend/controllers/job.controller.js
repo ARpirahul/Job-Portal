@@ -65,7 +65,10 @@ export const getJobById = async(req,res)=>{
   try{
      const jobId = req.params.id;
      const job = await Job.findById(jobId).populate({
-      path:"applications"
+      path:"applications",
+      populate:{
+        path:"applicant"
+      }
      });
      if(!job){ 
       return res.status(404).json({
@@ -79,6 +82,7 @@ export const getJobById = async(req,res)=>{
      })
   }catch(error){
     console.log(error);
+    return res.status(500).json({ message: "Internal server error", success: false });
   }
 }
 //admin kitne job create kra hai abhi tk

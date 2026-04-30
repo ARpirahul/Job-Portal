@@ -12,14 +12,16 @@ import { Application_API_END_POINT, JOB_API_END_POINT } from "../../utils/consta
 const JobDescription = () => {
     const {singleJob}= useSelector(store=>store.job);
     const {user} = useSelector(store=>store.auth)
-const isIntiallyApplied=singleJob?.applications.some(application=>application.applicant ===user?._id) || false;
-const [isApplied,setIsApplied] = useState(isIntiallyApplied)
+    const [isApplied,setIsApplied] = useState(false)
+    const [loading, setLoading] = useState(false);
     const params = useParams();
     const jobId = params.id;
     const dispatch= useDispatch();
 
     const applyJobHandler = async()=>{
+        if (loading || isApplied) return;
         try{
+            setLoading(true);
   const res = await axios.post(`${Application_API_END_POINT}/apply/${jobId}`,{},{withCredentials:true})
   console.log(res.data)
   if(res.data.success){
@@ -32,6 +34,8 @@ const [isApplied,setIsApplied] = useState(isIntiallyApplied)
             console.log(error);
             toast.error(error.response?.data?.message || "Failed to apply for job")
             
+        }finally{
+            setLoading(false);
         }
     }
     useEffect(()=>{
@@ -41,14 +45,19 @@ const [isApplied,setIsApplied] = useState(isIntiallyApplied)
  if(res.data.success){  
 
     dispatch(setSingleJob(res.data.job))
-    setIsApplied(res.data.job.applications.some(application=>application.applicant === user?._id))
+    const hasApplied = res.data.job.applications.some(application => 
+        String(application.applicant?._id || application.applicant) === String(user?._id)
+    );
+    setIsApplied(hasApplied);
  }
             }catch(error){
                 console.log(error);
                 
             }
         }
-        fetchSingleJob();
+        if(user?._id){
+            fetchSingleJob();
+        }
     },[jobId,dispatch,user?._id])
     return (
         <div className="max-w-5xl mx-auto my-10">
@@ -63,7 +72,7 @@ const [isApplied,setIsApplied] = useState(isIntiallyApplied)
                 </div>
                 <Button 
              onClick={isApplied ? null : applyJobHandler}
-                disabled={isApplied} className={`rounded-lg ${isApplied ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}>{isApplied ? "Already Applied" : "Apply Now"}</Button>
+                disabled={isApplied || loading} className={`rounded-lg ${isApplied ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}>{loading ? "Applying..." : isApplied ? "Already Applied" : "Apply Now"}</Button>
             </div>
             <h1 className="border-b-2 border-b-gray-300 font-medium py-4">Job Description</h1>
             <div>
