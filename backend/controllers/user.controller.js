@@ -265,7 +265,7 @@ export const login = async (req, res) => {
       });
     }
 
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email }).populate("profile.company");
     if (!user) {
       return res.status(400).json({
         message: "Incorrect email or password",
@@ -317,6 +317,34 @@ export const login = async (req, res) => {
       });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await User.findById(userId).populate("profile.company");
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        profile: user.profile,
+      },
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error", success: false });
   }
 };
 

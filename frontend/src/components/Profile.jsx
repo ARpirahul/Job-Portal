@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './shared/Navbar';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
@@ -7,15 +7,37 @@ import { Badge } from './ui/badge';
 import { Label } from './ui/label';
 import AppliedJobTable from './AppliedJobTable';
 import UpdateProfileDialog from './UpdateProfileDialog';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import useGetAppliedJobs from '@/hooks/useGetAppliedJobs';
+import axios from 'axios';
+import { USER_API_END_POINT } from '../utils/constant.js';
+import { setUser } from '../redux/authSlice.js';
 
 // const skills = ["HTML", "CSS", "JAVASCRIPT", "REACTJS"];
 const isResume = true;
 const Profile = () => {
     useGetAppliedJobs();
+    const dispatch = useDispatch();
     const [open,setOpen] = useState(false)
     const {user} = useSelector(store=>store.auth)
+
+    useEffect(() => {
+      const fetchProfile = async () => {
+        try {
+          const res = await axios.get(`${USER_API_END_POINT}/profile`, { withCredentials: true });
+          if (res.data.success) {
+            dispatch(setUser(res.data.user));
+          }
+        } catch (error) {
+          console.log("Failed to refresh profile:", error);
+        }
+      };
+
+      if (user && user.profile?.company && !user.profile.company.name) {
+        fetchProfile();
+      }
+    }, [user?.profile?.company, dispatch]);
+
     return (
         <div>
             <Navbar />
@@ -41,6 +63,10 @@ const Profile = () => {
                     <div className='flex items-center gap-3 my-2'>
                         <Contact />
                         <span>{user?.phoneNumber}</span>
+                    </div>
+                    <div className='flex items-center gap-3 my-2'>
+                        <span className='font-semibold'>Company:</span>
+                        <span>{user?.profile?.company?.name || "Not linked"}</span>
                     </div>
                 </div>
                 <div className='my-5'>
