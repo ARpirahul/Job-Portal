@@ -20,7 +20,7 @@ const [isApplied,setIsApplied] = useState(isIntiallyApplied)
 
     const applyJobHandler = async()=>{
         try{
-  const res = await axios.get(`${Application_API_END_POINT}/apply/${jobId}`,{withCredentials:true})
+  const res = await axios.post(`${Application_API_END_POINT}/apply/${jobId}`,{},{withCredentials:true})
   console.log(res.data)
   if(res.data.success){
     setIsApplied(true)
@@ -30,7 +30,7 @@ const [isApplied,setIsApplied] = useState(isIntiallyApplied)
   }
         }catch(error){
             console.log(error);
-            toast.error(error.response.data.message)
+            toast.error(error.response?.data?.message || "Failed to apply for job")
             
         }
     }
