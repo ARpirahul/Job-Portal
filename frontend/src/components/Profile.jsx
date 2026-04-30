@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Navbar from './shared/Navbar';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
@@ -20,6 +20,7 @@ const Profile = () => {
     const dispatch = useDispatch();
     const [open,setOpen] = useState(false)
     const {user} = useSelector(store=>store.auth)
+    const profileFetchedRef = useRef(false);
 
     useEffect(() => {
       const fetchProfile = async () => {
@@ -33,10 +34,11 @@ const Profile = () => {
         }
       };
 
-      if (user && user.profile?.company && !user.profile.company.name) {
+      if (!profileFetchedRef.current && user) {
+        profileFetchedRef.current = true;
         fetchProfile();
       }
-    }, [user?.profile?.company, dispatch]);
+    }, [user, dispatch]);
 
     return (
         <div>
