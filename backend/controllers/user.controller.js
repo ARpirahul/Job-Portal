@@ -16,6 +16,9 @@ export const register = async (req, res) => {
       });
     }
 
+    // Convert phoneNumber to number
+    const phoneNum = Number(phoneNumber);
+
     // Profile photo optional hai
     let profilePhotoUrl = "";
     if (req.file) {
@@ -40,7 +43,7 @@ export const register = async (req, res) => {
     await User.create({
       fullName,
       email,
-      phoneNumber,
+      phoneNumber: phoneNum,
       password: hashedPassword,
       role,
       profile: {
@@ -165,7 +168,7 @@ export const updateProfile = async (req, res) => {
 
     if (fullName) user.fullName = fullName;
     if (email) user.email = email;
-    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (phoneNumber) user.phoneNumber = Number(phoneNumber);
     if (bio) user.profile.bio = bio;
     if (skills) user.profile.skills = skillsArray;
     if (profilePhotoUrl) user.profile.profilePhoto = profilePhotoUrl;
