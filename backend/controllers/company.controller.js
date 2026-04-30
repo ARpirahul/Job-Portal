@@ -1,6 +1,7 @@
 import {Company} from "../models/company.model.js";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
+
 export const registerCompany = async(req,res)=>{
     try{
        const {name} = req.body;
@@ -10,26 +11,25 @@ export const registerCompany = async(req,res)=>{
             success:false
         });
        }
-       let company = await Company.findOne({name:name});
+       let company = await Company.findOne({name});
        if(company){
         return res.status(400).json({
-            message:"you can't register same company",
+            message:"You can't register same company",
             success:false
         })
        };
-     company= await Company.create({
-        name:name,
+     company = await Company.create({
+        name,
         userId:req.id
      })
-
      return res.status(201).json({
-        message:"company registered successfully",
+        message:"Company registered successfully",
         company,
         success:true
      })
-
     }catch(error){
         console.log(error);
+        return res.status(500).json({ message:"Internal server error", success:false });
     }
 }
 
@@ -39,7 +39,7 @@ export const getCompany = async(req,res)=>{
          const companies = await Company.find({userId});
          if(!companies){
             return res.status(404).json({
-                message:"companies not found",
+                message:"Companies not found",
                 success:false
             })
          }
@@ -49,6 +49,7 @@ export const getCompany = async(req,res)=>{
          })
     }catch(error){
         console.log(error);
+        return res.status(500).json({ message:"Internal server error", success:false });
     };
 }
 
@@ -58,7 +59,7 @@ export const getCompanyById = async(req,res)=>{
       const company = await Company.findById(companyId);
       if(!company){
         return res.status(404).json({
-            message:"company not found",
+            message:"Company not found",
             success:false
         })
       }
@@ -68,34 +69,43 @@ export const getCompanyById = async(req,res)=>{
       })
     }catch(error){
         console.log(error);
+        return res.status(500).json({ message:"Internal server error", success:false });
     }
 }
 
 export const updateCompany = async(req,res)=>{
     try{
         const {name,description,website,location} = req.body;
-   
-        const file = req.file;
-        // idher cloudinary aayega
-       const fileUri = getDataUri(file);
-       const cloudResponse = await cloudinary.uploader.upload(fileUri.content )
-       const logo = cloudResponse.secure_url;
+        let logo = "";
 
-        const updateData = {name,description,website,location,logo};
+        // Logo is OPTIONAL - only upload if file is provided
+        if(req.file){
+            try{
+                const fileUri = getDataUri(req.file);
+                const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+                logo = cloudResponse.secure_url;
+            }catch(err){
+                console.log("Cloudinary upload failed:", err.message);
+            }
+        }
 
-        const company = await Company.findByIdAndUpdate(req.params.id,updateData,{new:true});
+        const updateData = {name, description, website, location};
+        if(logo) updateData.logo = logo; // only update logo if uploaded
+
+        const company = await Company.findByIdAndUpdate(req.params.id, updateData, {new:true});
 
         if(!company){
-            res.status(404).json({
+            return res.status(404).json({
                 message:"Company not found",
                 success:false
             })
         }
         return res.status(200).json({
-            message:"company information updated",
+            message:"Company information updated",
             success:true
         })
     }catch(error){
         console.log(error);
+        return res.status(500).json({ message:"Internal server error", success:false });
     }
 }
