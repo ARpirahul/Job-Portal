@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import {Application} from "../models/application.model.js";
 import {Job} from "../models/job.model.js";
 export const applyJob = async(req,res)=>{
@@ -6,10 +7,16 @@ export const applyJob = async(req,res)=>{
       const jobId = req.params.id;
       if(!jobId){
          return res.status(400).json({
-            message:"job id is required",
+            message:"Job id is required",
             success:false
          })
       };
+      if(!mongoose.Types.ObjectId.isValid(jobId)){
+         return res.status(400).json({
+            message:"Invalid job id",
+            success:false
+         })
+      }
      //check if the user has already applied for the job 
      const existingApplication = await Application .findOne({job:jobId,applicant:userId});
      if(existingApplication){
