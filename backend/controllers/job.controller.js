@@ -30,6 +30,10 @@ export const postJob = async(req,res)=>{
       })
     }catch(error){
        console.log(error);
+       return res.status(500).json({ 
+         message: "Internal server error", 
+         success: false 
+       });
     }
 } 
 //student
@@ -58,6 +62,10 @@ export const getAllJobs=async(req,res)=>{
        })
   }catch(error){
     console.log(error);
+    return res.status(500).json({ 
+      message: "Internal server error", 
+      success: false 
+    });
   }
 }
 //student
@@ -105,5 +113,9 @@ export const getAdminJobs = async(req,res)=>{
       })
   }catch(error){
     console.log(error);
+    return res.status(500).json({ 
+      message: "Internal server error", 
+      success: false 
+    });
   }
 }

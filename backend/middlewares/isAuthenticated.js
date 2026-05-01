@@ -10,8 +10,8 @@ const isAuthenticated = async(req, res, next) => {
             })
         }
 
-        // Fixed: use JWT_SECRET (same as what we set in Render env vars)
-        const decode = await jwt.verify(token, process.env.JWT_SECRET || process.env.SECRET_KEY);
+        // use JWT_SECRET for verification
+        const decode = await jwt.verify(token, process.env.JWT_SECRET);
         if(!decode) {
             return res.status(401).json({
                 message: "Invalid token",

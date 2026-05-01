@@ -252,6 +252,10 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   }
 };
 
@@ -317,6 +321,75 @@ export const login = async (req, res) => {
       });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+      message: "Logged out successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { fullName, email, phoneNumber, bio, skills } = req.body;
+    let skillsArray;
+    if (skills) skillsArray = skills.split(",");
+
+    let profilePhotoUrl = "";
+    if (req.file) {
+      try {
+        const fileUri = getDataUri(req.file);
+        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+        profilePhotoUrl = cloudResponse.secure_url;
+      } catch (err) {
+        console.log("Cloudinary upload failed:", err.message);
+      }
+    }
+
+    const userId = req.id;
+    let user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ message: "User not found", success: false });
+    }
+
+    if (fullName) user.fullName = fullName;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = Number(phoneNumber);
+    if (bio) user.profile.bio = bio;
+    if (skills) user.profile.skills = skillsArray;
+    if (profilePhotoUrl) user.profile.profilePhoto = profilePhotoUrl;
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        profile: user.profile,
+      },
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error", success: false });
   }
 };
 
