@@ -19,6 +19,7 @@ const JobDescription = () => {
     const dispatch= useDispatch();
 
     const applyJobHandler = async()=>{
+        console.log("applyJobHandler", { jobId, loading, isApplied });
         if (loading || isApplied) return;
         if(!jobId){
             toast.error("Job ID is missing. Please refresh the page.");
@@ -27,7 +28,7 @@ const JobDescription = () => {
         try{
             setLoading(true);
             const res = await axios.post(`${Application_API_END_POINT}/apply/${jobId}`,{}, { withCredentials:true })
-            console.log(res.data)
+            console.log("apply response", res.data)
             if(res.data.success){
                 setIsApplied(true)
                 const updateSinglejob = {...singleJob,applications:[...singleJob.applications,{applicant:user?._id}]};
@@ -35,8 +36,9 @@ const JobDescription = () => {
                 toast.success(res.data.message)
             }
         }catch(error){
-            console.log(error);
-            toast.error(error.response?.data?.message || "Failed to apply for job")
+            console.log("apply error", error?.response?.data || error);
+            const message = error.response?.data?.message || "Failed to apply for job";
+            toast.error(message);
         }finally{
             setLoading(false);
         }
