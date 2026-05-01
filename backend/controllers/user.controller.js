@@ -69,7 +69,9 @@ export const login = async (req, res) => {
       });
     }
 
-    let user = await User.findOne({ email }).populate("profile.company");
+    let user = await User.findOne({ email }).populate({
+      path: "profile.company"
+    });
     if (!user) {
       return res.status(400).json({
         message: "Incorrect email or password",
@@ -196,7 +198,9 @@ export const updateProfile = async (req, res) => {
 export const getProfile = async (req, res) => {
   try {
     const userId = req.id;
-    const user = await User.findById(userId).populate("profile.company");
+    const user = await User.findById(userId).populate({
+      path: "profile.company"
+    });
     if (!user) {
       return res.status(404).json({
         message: "User not found",

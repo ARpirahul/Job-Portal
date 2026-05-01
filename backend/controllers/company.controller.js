@@ -24,7 +24,9 @@ export const registerCompany = async(req,res)=>{
         userId:req.id
      })
      await User.findByIdAndUpdate(req.id, { "profile.company": company._id });
-     const user = await User.findById(req.id).populate("profile.company");
+     const user = await User.findById(req.id).populate({
+       path: "profile.company"
+     });
      return res.status(201).json({
         message:"Company registered successfully",
         company,
