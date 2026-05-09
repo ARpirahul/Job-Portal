@@ -5,6 +5,60 @@ import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 
+// export const register = async (req, res) => {
+//   try {
+//     const { fullName, email, phoneNumber, password, role } = req.body;
+//     console.log(fullName, email, phoneNumber, password, role);
+
+//     if (!fullName || !email || !phoneNumber || !password || !role) {
+//       return res.status(400).json({
+//         message: "something is missing",
+//         success: false,
+//       });
+//     }
+
+//     // ✅ Photo optional hai
+//     const file = req.file;
+//     let profilePhoto = "";
+//     if (file) {
+//       const fileUri = getDataUri(file);
+//       const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+//       profilePhoto = cloudResponse.secure_url;
+//     }
+
+//     const user = await User.findOne({ email });
+//     if (user) {
+//       return res.status(400).json({
+//         message: "User already exist with this email",
+//         success: false,
+//       });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     await User.create({
+//       fullName,
+//       email,
+//       phoneNumber,
+//       password: hashedPassword,
+//       role,
+//       profile: {
+//         profilePhoto: profilePhoto,
+//       },
+//     });
+
+//     return res.status(201).json({
+//       message: "Account created successfully.",
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({
+//       message: "Internal server error",
+//       success: false,
+//     });
+//   }
+// };
+
 export const register = async (req, res) => {
   try {
     const { fullName, email, phoneNumber, password, role } = req.body;
@@ -12,7 +66,25 @@ export const register = async (req, res) => {
 
     if (!fullName || !email || !phoneNumber || !password || !role) {
       return res.status(400).json({
-        message: "something is missing",
+        message: "Something is missing",
+        success: false,
+      });
+    }
+
+    // ✅ Gmail format validation
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(email)) {
+      return res.status(400).json({
+        message: "Only Gmail addresses are allowed (e.g. example@gmail.com)",
+        success: false,
+      });
+    }
+
+    // ✅ 10-digit phone number validation
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({
+        message: "Phone number must be exactly 10 digits",
         success: false,
       });
     }
@@ -58,7 +130,6 @@ export const register = async (req, res) => {
     });
   }
 };
-
 export const login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
