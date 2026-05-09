@@ -22,7 +22,7 @@ const PostJob = () => {
     location: "",
     jobType: "",
     experience: "",
-    position: 0,
+    position: "",   // ✅ Fixed: 0 → "" (0 was falsy, failing the !position check)
     companyId: ""
   })
   const navigate = useNavigate();
@@ -30,7 +30,6 @@ const PostJob = () => {
   const [loading, setLoading] = useState(false);
   const { companies } = useSelector(store => store.company);
 
-  // Fetch companies when component loads
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
@@ -87,38 +86,37 @@ const PostJob = () => {
           <div className='grid grid-cols-2 gap-4'>
             <div>
               <Label>Title</Label>
-              <Input type="text" name="title" value={input.title} onChange={changeEventHandler} className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
+              <Input type="text" name="title" value={input.title} onChange={changeEventHandler} placeholder="Job title" className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
             </div>
             <div>
               <Label>Description</Label>
-              <Input type="text" name="description" value={input.description} onChange={changeEventHandler} className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
+              <Input type="text" name="description" value={input.description} onChange={changeEventHandler} placeholder="Job description" className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
             </div>
             <div>
               <Label>Requirements</Label>
-              <Input type="text" name="requirements" value={input.requirements} onChange={changeEventHandler} className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
+              <Input type="text" name="requirements" value={input.requirements} onChange={changeEventHandler} placeholder="React, Node.js, MongoDB" className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
             </div>
             <div>
               <Label>Salary (LPA)</Label>
-              <Input type="text" name="salary" value={input.salary} onChange={changeEventHandler} className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
+              <Input type="number" name="salary" value={input.salary} onChange={changeEventHandler} placeholder="e.g. 12" className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
             </div>
             <div>
               <Label>Location</Label>
-              <Input type="text" name="location" value={input.location} onChange={changeEventHandler} className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
+              <Input type="text" name="location" value={input.location} onChange={changeEventHandler} placeholder="e.g. Bangalore" className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
             </div>
             <div>
               <Label>Job Type</Label>
-              <Input type="text" name="jobType" value={input.jobType} onChange={changeEventHandler} className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
+              <Input type="text" name="jobType" value={input.jobType} onChange={changeEventHandler} placeholder="Full Time / Part Time" className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
             </div>
             <div>
-              <Label>Experience Level</Label>
-              <Input type="text" name="experience" value={input.experience} onChange={changeEventHandler} className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
+              <Label>Experience Level (years)</Label>
+              <Input type="number" name="experience" value={input.experience} onChange={changeEventHandler} placeholder="e.g. 2" className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
             </div>
             <div>
               <Label>No of Positions</Label>
-              <Input type="number" name="position" value={input.position} onChange={changeEventHandler} className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
+              <Input type="number" name="position" value={input.position} onChange={changeEventHandler} placeholder="e.g. 3" className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1" />
             </div>
 
-            {/* Company Select - always show */}
             <div className='col-span-2'>
               <Label>Select Company</Label>
               {companies.length > 0 ? (
