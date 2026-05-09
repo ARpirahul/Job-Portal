@@ -21,7 +21,6 @@
 // export const Application = mongoose.model("Application",applicationSchema);
 
 
-
 import mongoose from "mongoose";
 
 const applicationSchema = new mongoose.Schema({
