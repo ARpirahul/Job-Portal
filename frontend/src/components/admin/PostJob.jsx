@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { useDispatch } from 'react-redux'
-import { setCompanies } from '../../../../redux/companySlice.js'
+import { setCompanies } from '../../../redux/companySlice.js'
 
 const PostJob = () => {
   const [input, setInput] = useState({
