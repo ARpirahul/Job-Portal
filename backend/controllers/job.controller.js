@@ -1,5 +1,5 @@
-
 import {Job} from "../models/job.model.js";
+
 //admin
 export const postJob = async(req,res)=>{
     try{
@@ -18,8 +18,8 @@ export const postJob = async(req,res)=>{
         salary:Number(salary),
         location,
         jobType,
-        experienceLevel:experience,
-        position,
+        experienceLevel:Number(experience), // ✅ Fixed: convert to Number
+        position:Number(position),           // ✅ Fixed: convert to Number
         company:companyId,
         created_by:userId
       }) 
@@ -36,6 +36,7 @@ export const postJob = async(req,res)=>{
        });
     }
 } 
+
 //student
 export const getAllJobs=async(req,res)=>{
   try{
@@ -68,6 +69,7 @@ export const getAllJobs=async(req,res)=>{
     });
   }
 }
+
 //student
 export const getJobById = async(req,res)=>{
   try{
@@ -93,6 +95,7 @@ export const getJobById = async(req,res)=>{
     return res.status(500).json({ message: "Internal server error", success: false });
   }
 }
+
 //admin kitne job create kra hai abhi tk
 export const getAdminJobs = async(req,res)=>{
   try{
