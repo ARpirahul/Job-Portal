@@ -124,11 +124,13 @@ const JobDescription = () => {
         }
         try {
             setLoading(true);
-            const res = await axios.post(
-                `${Application_API_END_POINT}/apply/${jobId}`,
-                {},
-                { withCredentials: true }
-            );
+            // const res = await axios.post(
+            //     `${Application_API_END_POINT}/apply/${jobId}`,
+            //     {},
+            //     { withCredentials: true }
+            // );
+            const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, { withCredentials: true });
+
             if (res.data.success) {
                 setIsApplied(true);
                 const updatedSingleJob = {
