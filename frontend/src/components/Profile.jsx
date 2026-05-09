@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import useGetAppliedJobs from '@/hooks/useGetAppliedJobs';
 import axios from 'axios';
 import { USER_API_END_POINT } from '../../utils/constant.js';
-import { setUser } from '../redux/authSlice.js';
+import { setUser } from '../../redux/authSlice.js';
 
 // const skills = ["HTML", "CSS", "JAVASCRIPT", "REACTJS"];
 const isResume = true;
