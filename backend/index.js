@@ -1,3 +1,61 @@
+// import dotenv from "dotenv";
+// import path from "path";
+// import { fileURLToPath } from "url";
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+// dotenv.config({ path: path.join(__dirname, '.env') });
+
+// const { default: express } = await import("express");
+// const { default: cookieParser } = await import("cookie-parser");
+// const { default: cors } = await import("cors");
+// const { default: connectDB } = await import("./utils/db.js");
+// const { default: userRoute } = await import("./routes/user.route.js");
+// const { default: companyRoute } = await import("./routes/company.route.js");
+// const { default: jobRoute } = await import("./routes/job.route.js");
+// const { default: applicationRoute } = await import("./routes/application.route.js");
+
+// const app = express();
+
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(cookieParser());
+
+// const allowedOrigins = [
+//     "https://job-portal-k1vc.onrender.com",
+//     "http://localhost:5173",
+// ];
+
+// const corsOptions = {
+//     origin: function (origin, callback) {
+//         if (!origin) return callback(null, true);
+//         if (allowedOrigins.includes(origin)) return callback(null, true);
+//         return callback(new Error("Not allowed by CORS"));
+//     },
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+//     optionsSuccessStatus: 200,
+// };
+
+// app.use(cors(corsOptions));
+// app.options("*", cors(corsOptions));
+
+// app.use("/api/v1/user", userRoute);
+// app.use("/api/v1/company", companyRoute);
+// app.use("/api/v1/job", jobRoute);
+// app.use("/api/v1/application", applicationRoute);
+
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => {
+//     connectDB();
+//     console.log(`server running on port ${PORT}`);
+// });
+
+
+
+
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -18,12 +76,8 @@ const { default: applicationRoute } = await import("./routes/application.route.j
 
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
 const allowedOrigins = [
-    "https://job-portal-k1vc.onrender.com",
+    "https://job-portal-k1vc.onrender.com", // ✅ this must be your FRONTEND url
     "http://localhost:5173",
 ];
 
@@ -39,8 +93,13 @@ const corsOptions = {
     optionsSuccessStatus: 200,
 };
 
+// ✅ CORS must be FIRST — before any routes or other middleware
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/company", companyRoute);
